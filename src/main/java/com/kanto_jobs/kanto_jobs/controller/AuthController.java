@@ -35,12 +35,6 @@ public class AuthController {
         return build(u);
     }
 
-    @PostMapping("/google")
-    public AuthResponse google() {
-        User u = userRepository.findAll().stream().findFirst().orElseThrow();
-        return build(u);
-    }
-
     private AuthResponse build(User u) {
         return AuthResponse.builder().accessToken(jwtService.issue(u)).tokenType("Bearer")
             .expiresIn(jwtService.getExpiryMs()).user(toDto(u)).build();
