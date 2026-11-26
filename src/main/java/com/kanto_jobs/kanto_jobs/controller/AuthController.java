@@ -30,7 +30,7 @@ public class AuthController {
     public AuthResponse register(@Valid @RequestBody RegisterRequest req) {
         if (userRepository.existsByEmail(req.getEmail())) throw new ResponseStatusException(HttpStatus.CONFLICT, "email exists");
         User u = User.builder().email(req.getEmail()).password(passwordEncoder.encode(req.getPassword()))
-            .firstName(req.getFirstName()).lastName(req.getLastName()).gigCoins(2).build();
+            .firstName(req.getFirstName()).lastName(req.getLastName()).address("Anupul, Bamban, Tarlac").gigCoins(2).build();
         userRepository.save(u);
         return build(u);
     }
