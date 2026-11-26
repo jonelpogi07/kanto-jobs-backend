@@ -20,14 +20,16 @@ public class User {
     private String lastName;
     private String phone;
     private String address;
-    private Double lat;
-    private Double lng;
     private String profileImage;
     private String bio;
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private Role role = Role.USER;
+    @Builder.Default
     private Integer gigCoins = 0;
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
+    @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Embedded
@@ -61,10 +63,13 @@ public class User {
     @Column(name = "day")
     private List<String> availableDays;
 
+    @Builder.Default
     private Integer completedGigs = 0;
     private Boolean isNegotiable;
     private Boolean phoneVerified;
 
+    @Builder.Default
     private Double ratingAverage = 0.0;
+    @Builder.Default
     private Integer ratingCount = 0;
 }

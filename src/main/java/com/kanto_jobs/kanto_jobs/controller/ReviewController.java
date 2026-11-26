@@ -5,8 +5,6 @@ import com.kanto_jobs.kanto_jobs.domain.*;
 import com.kanto_jobs.kanto_jobs.dto.*;
 import com.kanto_jobs.kanto_jobs.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,14 +29,6 @@ public class ReviewController {
         // Update reviewee's rating aggregation
         updateRatingAggregation(reviewee.getId());
         return toDto(r);
-    }
-
-    @GetMapping("/users/{userId}/reviews")
-    public Page<ReviewDTO> byUser(@PathVariable Long userId,
-                                   @RequestParam(defaultValue = "0") int page,
-                                   @RequestParam(defaultValue = "20") int size) {
-        PageRequest pageable = PageRequest.of(page, size);
-        return reviewRepo.findByRevieweeId(userId, pageable).map(this::toDto);
     }
 
     private void updateRatingAggregation(Long userId) {

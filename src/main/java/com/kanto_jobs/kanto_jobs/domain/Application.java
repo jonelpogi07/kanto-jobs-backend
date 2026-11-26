@@ -17,8 +17,11 @@ public class Application {
     @Column(length = 2000)
     private String pitch;
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private ApplicationStatus status = ApplicationStatus.PENDING;
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     private Long reportId;
+    @Builder.Default
     private Boolean reportedByMe = false;
 }

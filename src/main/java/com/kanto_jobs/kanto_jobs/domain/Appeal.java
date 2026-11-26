@@ -21,7 +21,9 @@ public class Appeal {
     @CollectionTable(name = "appeal_evidence", joinColumns = @JoinColumn(name = "appeal_id"))
     private List<AppealEvidence> evidence;
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private AppealStatus status = AppealStatus.PENDING;
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime reviewedAt;
 }

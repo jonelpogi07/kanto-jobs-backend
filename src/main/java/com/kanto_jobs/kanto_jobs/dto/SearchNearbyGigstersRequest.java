@@ -7,8 +7,5 @@ import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class SearchNearbyGigstersRequest {
-    private Double latitude;
-    private Double longitude;
-    private Double maxDistanceKm;
     private JobCategory category;
 }

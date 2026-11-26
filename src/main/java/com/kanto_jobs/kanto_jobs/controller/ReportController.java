@@ -21,6 +21,7 @@ public class ReportController {
     private final JobPostRepository jobRepo;
     private final ApplicationRepository applicationRepo;
     private final CurrentUser currentUser;
+    private final com.kanto_jobs.kanto_jobs.service.ChatNotificationService chatNotificationService;
 
     @GetMapping
     public Page<ReportDTO> list(
@@ -86,7 +87,10 @@ public class ReportController {
             application.setReportId(r.getId());
             applicationRepo.save(application);
         }
-        
+
+        boolean reporterIsClient = u.getId().equals(job.getPoster().getId());
+        chatNotificationService.postReportNotice(r, reporterIsClient ? "Client" : "Gigster");
+
         return toDto(r);
     }
 

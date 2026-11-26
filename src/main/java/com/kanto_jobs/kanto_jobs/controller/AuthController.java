@@ -43,7 +43,7 @@ public class AuthController {
     private UserDTO toDto(User u) {
         UserDTO d = new UserDTO();
         d.setId(u.getId()); d.setEmail(u.getEmail()); d.setFirstName(u.getFirstName()); d.setLastName(u.getLastName());
-        d.setPhone(u.getPhone()); d.setAddress(u.getAddress()); d.setLat(u.getLat()); d.setLng(u.getLng());
+        d.setPhone(u.getPhone()); d.setAddress(u.getAddress());
         d.setProfileImage(u.getProfileImage()); d.setBio(u.getBio()); d.setGigCoins(u.getGigCoins());
         d.setCreatedAt(u.getCreatedAt());
         if (u.getContact() != null) {

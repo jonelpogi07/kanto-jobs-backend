@@ -25,21 +25,23 @@ public class JobPost {
     private String barangay;
     private String city;
     private String landmark;
-    private Double latitude;
-    private Double longitude;
     @Enumerated(EnumType.STRING)
     private JobTiming timing;
     private LocalDateTime scheduledAt;
     private String estimatedDuration;
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private JobStatus status = JobStatus.OPEN;
     @ManyToOne
     private User poster;
+    @Builder.Default
     private Integer applicantCount = 0;
     private Long acceptedApplicationId;
     @ElementCollection
     private List<String> images;
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
+    @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
     private Boolean isNegotiable;
     private String partnerMerchantId;

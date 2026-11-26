@@ -59,7 +59,7 @@ public class ChatController {
             t.setOtherUser(ou);
             t.setLastMessage(last != null ? last.getBody() : null);
             t.setLastMessageAt(last != null ? last.getCreatedAt() : null);
-            t.setUnreadCount((int) msgs.stream().filter(m -> m.getReadAt() == null && !m.getSender().getId().equals(u.getId())).count());
+            t.setUnreadCount((int) msgs.stream().filter(m -> m.getReadAt() == null && (m.getSender() == null || !m.getSender().getId().equals(u.getId()))).count());
             t.setUpdatedAt(a.getCreatedAt());
             t.setHasReportNotice(a.getReportId() != null);
             threads.add(t);
@@ -102,7 +102,7 @@ public class ChatController {
                     t.setOtherUser(ou);
                     t.setLastMessage(last != null ? last.getBody() : null);
                     t.setLastMessageAt(last != null ? last.getCreatedAt() : null);
-                    t.setUnreadCount((int) msgs.stream().filter(m -> m.getReadAt() == null && !m.getSender().getId().equals(u.getId())).count());
+                    t.setUnreadCount((int) msgs.stream().filter(m -> m.getReadAt() == null && (m.getSender() == null || !m.getSender().getId().equals(u.getId()))).count());
                     t.setUpdatedAt(r.getReportedAt());
                     t.setHasReportNotice(true);
                     threads.add(t);
@@ -122,11 +122,12 @@ public class ChatController {
             ChatMessageDTO d = new ChatMessageDTO();
             d.setId(m.getId()); 
             d.setThreadId(m.getThreadId()); 
-            d.setSenderId(m.getSender().getId());
+            d.setSenderId(m.getSender() != null ? m.getSender().getId() : 0L);
             d.setBody(m.getBody()); 
             d.setCreatedAt(m.getCreatedAt()); 
             d.setReadAt(m.getReadAt()); 
-            d.setType("text");
+            d.setType(m.getType() != null ? m.getType() : "text");
+            d.setData(m.getData());
             return d;
         }).collect(Collectors.toList());
     }

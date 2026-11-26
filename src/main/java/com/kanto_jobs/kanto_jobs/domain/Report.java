@@ -21,10 +21,13 @@ public class Report {
     private String reason;
     private String note;
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private ReportStatus status = ReportStatus.PENDING;
+    @Builder.Default
     private LocalDateTime reportedAt = LocalDateTime.now();
     private LocalDateTime appealDeadline;
     private LocalDateTime appealedAt;
+    @Builder.Default
     private Boolean refunded = false;
     private LocalDateTime refundedAt;
 }

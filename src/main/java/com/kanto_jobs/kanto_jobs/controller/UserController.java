@@ -32,8 +32,6 @@ public class UserController {
         if (req.getLastName() != null) u.setLastName(req.getLastName());
         if (req.getPhone() != null) u.setPhone(req.getPhone());
         if (req.getAddress() != null) u.setAddress(req.getAddress());
-        if (req.getLat() != null) u.setLat(req.getLat());
-        if (req.getLng() != null) u.setLng(req.getLng());
         if (req.getProfileImage() != null) u.setProfileImage(req.getProfileImage());
         if (req.getBio() != null) u.setBio(req.getBio());
         if (req.getSkills() != null) u.setSkills(req.getSkills());
@@ -82,7 +80,7 @@ public class UserController {
     private UserDTO toDto(User u) {
         UserDTO d = new UserDTO();
         d.setId(u.getId()); d.setEmail(u.getEmail()); d.setFirstName(u.getFirstName()); d.setLastName(u.getLastName());
-        d.setPhone(u.getPhone()); d.setAddress(u.getAddress()); d.setLat(u.getLat()); d.setLng(u.getLng());
+        d.setPhone(u.getPhone()); d.setAddress(u.getAddress());
         d.setProfileImage(u.getProfileImage()); d.setBio(u.getBio()); d.setGigCoins(u.getGigCoins());
         d.setCreatedAt(u.getCreatedAt());
         if (u.getContact() != null) {

@@ -18,9 +18,6 @@ public class JobPostDTO {
     private String barangay;
     private String city;
     private String landmark;
-    private Double latitude;
-    private Double longitude;
-    private Double distanceKm;
     private JobTiming timing;
     private LocalDateTime scheduledAt;
     private String estimatedDuration;

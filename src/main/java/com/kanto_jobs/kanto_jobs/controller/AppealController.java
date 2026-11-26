@@ -18,6 +18,7 @@ public class AppealController {
     private final ReportRepository reportRepo;
     private final AppealRepository appealRepo;
     private final CurrentUser currentUser;
+    private final com.kanto_jobs.kanto_jobs.service.ChatNotificationService chatNotificationService;
 
     @PostMapping("/reports/{reportId}/appeal")
     public AppealDTO appeal(@PathVariable Long reportId, @RequestBody CreateAppealRequest req) {
@@ -43,6 +44,7 @@ public class AppealController {
             .evidence(evidence)
             .build();
         appealRepo.save(a);
+        chatNotificationService.postAppealNotice(a, r);
         return toDto(a);
     }
 

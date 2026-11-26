@@ -21,6 +21,7 @@ public class ApplicationController {
     private final ReportRepository reportRepo;
     private final ReviewRepository reviewRepo;
     private final CurrentUser currentUser;
+    private final com.kanto_jobs.kanto_jobs.service.ChatNotificationService chatNotificationService;
 
     @GetMapping("/mine")
     public List<ApplicationDTO> mine() {
@@ -127,6 +128,7 @@ public class ApplicationController {
         a.setReportId(r.getId());
         a.setReportedByMe(true);
         appRepo.save(a);
+        chatNotificationService.postReportNotice(r, "Gigster");
         return toDto(a, userRepo, reviewRepo);
     }
 
@@ -161,13 +163,28 @@ public class ApplicationController {
                 job.setStatus(jp.getStatus());
                 job.setBarangay(jp.getBarangay());
                 job.setCity(jp.getCity());
+                User poster = jp.getPoster();
+                if (poster != null) {
+                    job.setPoster(UserSummaryDTO.builder()
+                        .id(poster.getId())
+                        .fullName((poster.getFirstName() == null ? "" : poster.getFirstName()) + " " + (poster.getLastName() == null ? "" : poster.getLastName()))
+                        .avatarUrl(poster.getProfileImage())
+                        .barangay(poster.getAddress())
+                        .city(poster.getAddress())
+                        .phoneVerified(Boolean.TRUE.equals(poster.getPhoneVerified()))
+                        .ratingAverage(poster.getRatingAverage() != null ? poster.getRatingAverage() : 0.0)
+                        .ratingCount(poster.getRatingCount() != null ? poster.getRatingCount() : 0)
+                        .completedGigs(poster.getCompletedGigs() != null ? poster.getCompletedGigs() : 0)
+                        .build());
+                }
             }
         } catch (Exception ignored) {}
         
         // Contact gating: only show contact info when status is SCREENING or ACCEPTED
+        ApplicationStatus status = a.getStatus() != null ? a.getStatus() : ApplicationStatus.PENDING;
         ContactInfoDTO applicantContact = null;
         ContactInfoDTO posterContact = null;
-        if (a.getStatus() == ApplicationStatus.SCREENING || a.getStatus() == ApplicationStatus.ACCEPTED) {
+        if (status == ApplicationStatus.SCREENING || status == ApplicationStatus.ACCEPTED) {
             User applicant = a.getApplicant();
             User poster = a.getJob().getPoster();
             
@@ -188,7 +205,7 @@ public class ApplicationController {
             .job(job)
             .applicant(app)
             .pitch(a.getPitch())
-            .status(a.getStatus())
+            .status(status)
             .applicantContact(applicantContact)
             .posterContact(posterContact)
             .createdAt(a.getCreatedAt())

@@ -27,24 +27,21 @@ public class JobController {
     private final ReportRepository reportRepo;
     private final ReviewRepository reviewRepo;
     private final CurrentUser currentUser;
+    private final com.kanto_jobs.kanto_jobs.service.ChatNotificationService chatNotificationService;
 
     @GetMapping
     public Page<JobPostDTO> search(
             @RequestParam(required = false) String q,
             @RequestParam(required = false) JobCategory category,
-            @RequestParam(required = false) Double lat,
-            @RequestParam(required = false) Double lng,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         List<JobPost> all = jobRepo.findOpenJobs();
-        List<JobPostDTO> dtos = all.stream().map(j -> toDto(j, lat, lng)).collect(Collectors.toList());
+        List<JobPostDTO> dtos = all.stream().map(j -> toDto(j)).collect(Collectors.toList());
         
-        // Ordering: merchant-boost → urgent → distance → newest
+        // Ordering: merchant-boost → urgent → newest
         dtos.sort(Comparator
             .comparing((JobPostDTO j) -> j.getMerchantBoosted() != null && j.getMerchantBoosted() ? 0 : 1)
             .thenComparing(j -> j.getTiming() == JobTiming.URGENT ? 0 : 1)
-            .thenComparing(j -> j.getDistanceKm() == null ? 1 : 0)
-            .thenComparing(j -> j.getDistanceKm() == null ? 0 : j.getDistanceKm())
             .thenComparing(j -> j.getCreatedAt(), Comparator.nullsLast(Comparator.reverseOrder()))
         );
 
@@ -56,8 +53,8 @@ public class JobController {
     }
 
     @GetMapping("/{id}")
-    public JobPostDTO get(@PathVariable Long id, @RequestParam(required = false) Double lat, @RequestParam(required = false) Double lng) {
-        return toDto(jobRepo.findById(id).orElseThrow(), lat, lng);
+    public JobPostDTO get(@PathVariable Long id) {
+        return toDto(jobRepo.findById(id).orElseThrow());
     }
 
     @PostMapping
@@ -67,7 +64,7 @@ public class JobController {
             .title(req.getTitle()).description(req.getDescription()).category(req.getCategory())
             .compensationType(req.getCompensationType()).amount(req.getAmount()).paymentMethods(req.getPaymentMethods())
             .barangay(req.getBarangay()).city(req.getCity()).landmark(req.getLandmark())
-            .latitude(req.getLatitude()).longitude(req.getLongitude()).timing(req.getTiming())
+            .timing(req.getTiming())
             .scheduledAt(req.getScheduledAt()).estimatedDuration(req.getEstimatedDuration())
             .images(req.getImages()).isNegotiable(req.getIsNegotiable())
             .partnerMerchantId(req.getPartnerMerchantId()).partnerMerchantName(req.getPartnerMerchantName())
@@ -75,7 +72,7 @@ public class JobController {
             .merchantId(req.getMerchantId()).merchantName(req.getMerchantName()).merchantBoosted(req.getMerchantBoosted())
             .poster(u).status(JobStatus.OPEN).build();
         jobRepo.save(j);
-        return toDto(j, null, null);
+        return toDto(j);
     }
 
     @PutMapping("/{id}")
@@ -84,18 +81,18 @@ public class JobController {
         j.setTitle(req.getTitle()); j.setDescription(req.getDescription()); j.setCategory(req.getCategory());
         j.setCompensationType(req.getCompensationType()); j.setAmount(req.getAmount()); j.setPaymentMethods(req.getPaymentMethods());
         j.setBarangay(req.getBarangay()); j.setCity(req.getCity()); j.setLandmark(req.getLandmark());
-        j.setLatitude(req.getLatitude()); j.setLongitude(req.getLongitude()); j.setTiming(req.getTiming());
+        j.setTiming(req.getTiming());
         j.setScheduledAt(req.getScheduledAt()); j.setEstimatedDuration(req.getEstimatedDuration());
         j.setImages(req.getImages()); j.setIsNegotiable(req.getIsNegotiable());
         j.setUpdatedAt(LocalDateTime.now());
         jobRepo.save(j);
-        return toDto(j, null, null);
+        return toDto(j);
     }
 
     @GetMapping("/mine")
     public List<JobPostDTO> mine() {
         Long uid = currentUser.get().getId();
-        return jobRepo.findByPosterId(uid).stream().map(j -> toDto(j, null, null)).collect(Collectors.toList());
+        return jobRepo.findByPosterId(uid).stream().map(j -> toDto(j)).collect(Collectors.toList());
     }
 
     @PostMapping("/{id}/complete")
@@ -103,7 +100,7 @@ public class JobController {
         JobPost j = jobRepo.findById(id).orElseThrow();
         j.setStatus(JobStatus.COMPLETED); j.setUpdatedAt(LocalDateTime.now());
         jobRepo.save(j);
-        return toDto(j, null, null);
+        return toDto(j);
     }
 
     @PostMapping("/{id}/cancel")
@@ -111,7 +108,7 @@ public class JobController {
         JobPost j = jobRepo.findById(id).orElseThrow();
         j.setStatus(JobStatus.CANCELLED); j.setUpdatedAt(LocalDateTime.now());
         jobRepo.save(j);
-        return toDto(j, null, null);
+        return toDto(j);
     }
 
     @PostMapping("/{id}/apply")
@@ -155,7 +152,8 @@ public class JobController {
         j.setReportedAt(LocalDateTime.now());
         j.setAppealDeadline(LocalDateTime.now().plusHours(24));
         jobRepo.save(j);
-        return toDto(j, null, null);
+        chatNotificationService.postReportNotice(r, "Client");
+        return toDto(j);
     }
 
     @PostMapping("/search-nearby-gigsters")
@@ -164,16 +162,7 @@ public class JobController {
         return new SearchNearbyGigstersResponse(List.of(), 0);
     }
 
-    private JobPostDTO toDto(JobPost j, Double lat, Double lng) {
-        Double dist = null;
-        if (lat != null && lng != null && j.getLatitude() != null && j.getLongitude() != null) {
-            double R = 6371;
-            double dLat = Math.toRadians(j.getLatitude() - lat);
-            double dLng = Math.toRadians(j.getLongitude() - lng);
-            double a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(Math.toRadians(lat))*Math.cos(Math.toRadians(j.getLatitude()))*Math.sin(dLng/2)*Math.sin(dLng/2);
-            double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            dist = R * c;
-        }
+    private JobPostDTO toDto(JobPost j) {
         UserSummaryDTO poster = UserSummaryDTO.builder().id(j.getPoster().getId())
             .fullName(j.getPoster().getFirstName() + " " + j.getPoster().getLastName())
             .avatarUrl(j.getPoster().getProfileImage()).barangay(j.getPoster().getAddress()).city(j.getPoster().getAddress())
@@ -181,8 +170,8 @@ public class JobController {
         
         // Check if current user has reported this job
         boolean reportedByMe = false;
-        User current = currentUser.get();
-        if (j.getReportId() != null) {
+        User current = currentUser.getOrNull();
+        if (j.getReportId() != null && current != null) {
             // Check if current user is the reporter
             reportedByMe = reportRepo.existsByIdAndReporterId(j.getReportId(), current.getId());
         }
@@ -190,7 +179,7 @@ public class JobController {
         return JobPostDTO.builder().id(j.getId()).title(j.getTitle()).description(j.getDescription())
             .category(j.getCategory()).compensationType(j.getCompensationType()).amount(j.getAmount())
             .paymentMethods(j.getPaymentMethods()).barangay(j.getBarangay()).city(j.getCity()).landmark(j.getLandmark())
-            .latitude(j.getLatitude()).longitude(j.getLongitude()).distanceKm(dist).timing(j.getTiming())
+            .timing(j.getTiming())
             .scheduledAt(j.getScheduledAt()).estimatedDuration(j.getEstimatedDuration()).status(j.getStatus())
             .poster(poster).applicantCount(j.getApplicantCount()).acceptedApplicationId(j.getAcceptedApplicationId())
             .images(j.getImages()).createdAt(j.getCreatedAt()).updatedAt(j.getUpdatedAt())

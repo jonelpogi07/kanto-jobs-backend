@@ -13,4 +13,5 @@ public class ChatMessageDTO {
     private LocalDateTime createdAt;
     private LocalDateTime readAt;
     private String type;
+    private String data;
 }
