@@ -181,7 +181,8 @@ public class ChatController {
         if (lastReadId != null) {
             List<ChatMessage> unreadMessages = msgRepo.findByThreadIdAndIdGreaterThan(threadId, 0L)
                 .stream()
-                .filter(m -> m.getId() <= lastReadId && m.getReadAt() == null && !m.getSender().getId().equals(u.getId()))
+                .filter(m -> m.getId() <= lastReadId && m.getReadAt() == null
+                    && (m.getSender() == null || !m.getSender().getId().equals(u.getId())))
                 .toList();
             for (ChatMessage m : unreadMessages) {
                 m.setReadAt(LocalDateTime.now());
