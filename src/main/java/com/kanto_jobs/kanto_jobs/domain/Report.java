@@ -1,0 +1,26 @@
+package com.kanto_jobs.kanto_jobs.domain;
+
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "reports")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+public class Report {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Long reporterId;
+    private Long targetUserId;
+    private Long jobId;
+    private Long applicationId;
+    private String reason;
+    private String note;
+    @Enumerated(EnumType.STRING)
+    private ReportStatus status = ReportStatus.PENDING;
+    private LocalDateTime reportedAt = LocalDateTime.now();
+    private LocalDateTime appealDeadline;
+    private LocalDateTime appealedAt;
+    private Boolean refunded = false;
+    private LocalDateTime refundedAt;
+}
