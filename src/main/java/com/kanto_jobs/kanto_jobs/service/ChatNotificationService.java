@@ -63,6 +63,16 @@ public class ChatNotificationService {
         save(-report.getId(), body, "appeal", data);
     }
 
+    @Transactional
+    public void postWithdrawalNotice(Long threadId, User gigster, String jobTitle) {
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("gigsterId", gigster.getId());
+        data.put("gigsterName", gigster.getFirstName() + " " + gigster.getLastName());
+        data.put("jobTitle", jobTitle);
+        String body = gigster.getFirstName() + " " + gigster.getLastName() + " withdrew from \"" + jobTitle + "\".";
+        save(threadId, body, "system", data);
+    }
+
     private void save(Long threadId, String body, String type, Map<String, Object> data) {
         ChatMessage msg = ChatMessage.builder()
             .threadId(threadId)

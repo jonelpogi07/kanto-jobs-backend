@@ -65,7 +65,27 @@ public class ApplicationController {
     @PostMapping("/{id}/cancel")
     public ApplicationDTO cancel(@PathVariable Long id) {
         Application a = appRepo.findById(id).orElseThrow();
-        a.setStatus(ApplicationStatus.CANCELLED); appRepo.save(a);
+        User u = currentUser.get();
+        if (!a.getApplicant().getId().equals(u.getId())) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.FORBIDDEN, "Only the applicant can cancel this application");
+        }
+        boolean wasAccepted = a.getStatus() == ApplicationStatus.ACCEPTED;
+        JobPost job = a.getJob();
+        a.setStatus(ApplicationStatus.CANCELLED);
+        appRepo.save(a);
+
+        if (wasAccepted) {
+            // Mark the gig as cancelled (by the gigster). Do NOT reopen for other applicants.
+            // The client can report the gigster; after the 24-hour appeal window with no appeal,
+            // the GigCoin is refunded via GigCoinRefundService. Keep acceptedApplicationId so the
+            // client's report targets this gigster.
+            job.setStatus(JobStatus.CANCELLED);
+            job.setUpdatedAt(LocalDateTime.now());
+            jobRepo.save(job);
+            // Notify the client via a system message in the application's chat thread.
+            chatNotificationService.postWithdrawalNotice(a.getId(), u, job.getTitle());
+        }
         return toDto(a, userRepo, reviewRepo);
     }
 
