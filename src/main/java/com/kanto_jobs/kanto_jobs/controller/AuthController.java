@@ -45,6 +45,28 @@ public class AuthController {
         d.setId(u.getId()); d.setEmail(u.getEmail()); d.setFirstName(u.getFirstName()); d.setLastName(u.getLastName());
         d.setPhone(u.getPhone()); d.setAddress(u.getAddress()); d.setLat(u.getLat()); d.setLng(u.getLng());
         d.setProfileImage(u.getProfileImage()); d.setBio(u.getBio()); d.setGigCoins(u.getGigCoins());
+        d.setCreatedAt(u.getCreatedAt());
+        if (u.getContact() != null) {
+            ContactInfoDTO c = new ContactInfoDTO();
+            c.setPhoneNumber(u.getContact().getPhoneNumber());
+            c.setViberNumber(u.getContact().getViberNumber());
+            c.setMessengerUsername(u.getContact().getMessengerUsername());
+            d.setContact(c);
+        }
+        d.setViberNumber(u.getViberNumber());
+        d.setMessengerUsername(u.getMessengerUsername());
+        d.setMerchantId(u.getMerchantId());
+        d.setMerchantName(u.getMerchantName());
+        d.setIsBusinessMerchant(u.getIsBusinessMerchant());
+        d.setMerchantBusinessName(u.getMerchantBusinessName());
+        d.setUnlimitedGigsterScreening(u.getUnlimitedGigsterScreening());
+        d.setMerchantPartnershipActive(u.getMerchantPartnershipActive());
+        d.setRateType(u.getRateType());
+        d.setSkills(u.getSkills());
+        d.setAvailableDays(u.getAvailableDays());
+        d.setCompletedGigs(u.getCompletedGigs());
+        d.setIsNegotiable(u.getIsNegotiable());
+        d.setPhoneVerified(u.getPhoneVerified());
         return d;
     }
 }

@@ -16,4 +16,5 @@ public class ApplicationDTO {
     private ContactInfoDTO applicantContact;
     private ContactInfoDTO posterContact;
     private LocalDateTime createdAt;
+    private Boolean reportedByMe;
 }

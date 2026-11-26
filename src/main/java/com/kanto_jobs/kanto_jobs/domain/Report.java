@@ -10,10 +10,14 @@ import java.time.LocalDateTime;
 public class Report {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long reporterId;
-    private Long targetUserId;
-    private Long jobId;
-    private Long applicationId;
+    @ManyToOne
+    private User reporter;
+    @ManyToOne
+    private User targetUser;
+    @ManyToOne
+    private JobPost job;
+    @ManyToOne
+    private Application application;
     private String reason;
     private String note;
     @Enumerated(EnumType.STRING)

@@ -19,4 +19,6 @@ public class Application {
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status = ApplicationStatus.PENDING;
     private LocalDateTime createdAt = LocalDateTime.now();
+    private Long reportId;
+    private Boolean reportedByMe = false;
 }

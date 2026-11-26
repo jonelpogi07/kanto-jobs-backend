@@ -49,4 +49,9 @@ public class JobPost {
     private Long merchantId;
     private String merchantName;
     private Boolean merchantBoosted;
+    private Long reportId;
+    private LocalDateTime reportedAt;
+    private LocalDateTime appealDeadline;
+    private Boolean gigCoinRefunded;
+    private LocalDateTime refundedAt;
 }

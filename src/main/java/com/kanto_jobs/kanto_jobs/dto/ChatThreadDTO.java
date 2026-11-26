@@ -20,4 +20,5 @@ public class ChatThreadDTO {
     private LocalDateTime lastMessageAt;
     private Integer unreadCount;
     private LocalDateTime updatedAt;
+    private Boolean hasReportNotice;
 }

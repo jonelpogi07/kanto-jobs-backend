@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findByJobId(Long jobId);
+    boolean existsByIdAndReporterId(Long reportId, Long reporterId);
 }
