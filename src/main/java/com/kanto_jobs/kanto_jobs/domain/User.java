@@ -32,14 +32,6 @@ public class User {
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name = "phoneNumber", column = @Column(name = "contact_phone_number")),
-        @AttributeOverride(name = "viberNumber", column = @Column(name = "contact_viber_number")),
-        @AttributeOverride(name = "messengerUsername", column = @Column(name = "contact_messenger_username"))
-    })
-    private ContactInfo contact;
-
     private String viberNumber;
     private String messengerUsername;
 

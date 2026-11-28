@@ -18,7 +18,6 @@ public class UserDTO {
     private String bio;
     private Integer gigCoins;
     private LocalDateTime createdAt;
-    private ContactInfoDTO contact;
     private String viberNumber;
     private String messengerUsername;
     private Long merchantId;

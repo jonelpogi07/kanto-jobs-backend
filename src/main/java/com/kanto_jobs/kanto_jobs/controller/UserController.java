@@ -83,13 +83,6 @@ public class UserController {
         d.setPhone(u.getPhone()); d.setAddress(u.getAddress());
         d.setProfileImage(u.getProfileImage()); d.setBio(u.getBio()); d.setGigCoins(u.getGigCoins());
         d.setCreatedAt(u.getCreatedAt());
-        if (u.getContact() != null) {
-            ContactInfoDTO c = new ContactInfoDTO();
-            c.setPhoneNumber(u.getContact().getPhoneNumber());
-            c.setViberNumber(u.getContact().getViberNumber());
-            c.setMessengerUsername(u.getContact().getMessengerUsername());
-            d.setContact(c);
-        }
         d.setViberNumber(u.getViberNumber());
         d.setMessengerUsername(u.getMessengerUsername());
         d.setMerchantId(u.getMerchantId());
