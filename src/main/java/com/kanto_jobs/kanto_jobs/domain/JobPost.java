@@ -38,6 +38,7 @@ public class JobPost {
     private Integer applicantCount = 0;
     private Long acceptedApplicationId;
     @ElementCollection
+    @jakarta.persistence.Column(columnDefinition = "TEXT")
     private List<String> images;
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();

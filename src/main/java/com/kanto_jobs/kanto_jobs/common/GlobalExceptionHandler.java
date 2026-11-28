@@ -1,5 +1,6 @@
 package com.kanto_jobs.kanto_jobs.common;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,6 +17,18 @@ public class GlobalExceptionHandler {
             "status", ex.getStatusCode().value(),
             "error", ex.getReason(),
             "message", ex.getReason(),
+            "path", req.getRequestURI()));
+    }
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String,Object>> handleConflict(DataIntegrityViolationException ex, HttpServletRequest req) {
+        String msg = ex.getMessage() != null && ex.getMessage().toLowerCase().contains("phone")
+            ? "Phone number is already registered"
+            : "Duplicate value";
+        return ResponseEntity.status(409).body(Map.of(
+            "timestamp", LocalDateTime.now().toString(),
+            "status", 409,
+            "error", "Conflict",
+            "message", msg,
             "path", req.getRequestURI()));
     }
     @ExceptionHandler(Exception.class)

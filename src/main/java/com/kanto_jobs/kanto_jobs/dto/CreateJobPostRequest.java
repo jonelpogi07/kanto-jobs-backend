@@ -45,6 +45,7 @@ public class CreateJobPostRequest {
     
     private String estimatedDuration;
     
+    @jakarta.validation.constraints.Size(max = 4)
     private List<String> images;
     
     private Boolean isNegotiable;

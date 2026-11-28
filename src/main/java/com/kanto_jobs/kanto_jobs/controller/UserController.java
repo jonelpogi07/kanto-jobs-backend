@@ -30,9 +30,14 @@ public class UserController {
         User u = currentUser.get();
         if (req.getFirstName() != null) u.setFirstName(req.getFirstName());
         if (req.getLastName() != null) u.setLastName(req.getLastName());
-        if (req.getPhone() != null) u.setPhone(req.getPhone());
+        // phone is immutable after registration
         if (req.getAddress() != null) u.setAddress(req.getAddress());
-        if (req.getProfileImage() != null) u.setProfileImage(req.getProfileImage());
+        if (req.getProfileImage() != null) {
+            if (req.getProfileImage().startsWith("data:image/")) {
+                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Base64 images not allowed");
+            }
+            u.setProfileImage(req.getProfileImage());
+        }
         if (req.getBio() != null) u.setBio(req.getBio());
         if (req.getSkills() != null) u.setSkills(req.getSkills());
         if (req.getAvailableDays() != null) u.setAvailableDays(req.getAvailableDays());

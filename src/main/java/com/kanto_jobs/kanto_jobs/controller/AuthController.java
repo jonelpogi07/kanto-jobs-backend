@@ -29,6 +29,7 @@ public class AuthController {
     @PostMapping("/register")
     public AuthResponse register(@Valid @RequestBody RegisterRequest req) {
         if (userRepository.existsByEmail(req.getEmail())) throw new ResponseStatusException(HttpStatus.CONFLICT, "email exists");
+        if (req.getPhone() != null && !req.getPhone().isBlank() && userRepository.existsByPhone(req.getPhone().trim())) throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone number is already registered");
         User u = User.builder().email(req.getEmail()).password(passwordEncoder.encode(req.getPassword()))
             .firstName(req.getFirstName()).lastName(req.getLastName()).phone(req.getPhone()).address("Anupul, Bamban, Tarlac").gigCoins(2).build();
         userRepository.save(u);

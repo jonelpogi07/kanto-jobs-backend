@@ -10,5 +10,6 @@ public class AppealEvidence {
     private String name;
     private String type;
     private Long size;
+    @jakarta.persistence.Column(columnDefinition = "TEXT")
     private String dataUrl;
 }

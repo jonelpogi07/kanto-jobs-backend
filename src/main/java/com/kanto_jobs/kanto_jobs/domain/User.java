@@ -18,8 +18,10 @@ public class User {
     private String password;
     private String firstName;
     private String lastName;
+    @Column(unique = true)
     private String phone;
     private String address;
+    @Column(columnDefinition = "TEXT")
     private String profileImage;
     private String bio;
     @Enumerated(EnumType.STRING)
